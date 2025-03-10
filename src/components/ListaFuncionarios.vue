@@ -78,39 +78,11 @@ const editarFuncionario = (funcionario, event) => {
   });
 };
 
-// Abre o modal de confirmação para excluir um funcionário
-const confirmarExclusao = (funcionario, event) => {
+// Exibe o modal informando que não é possível excluir
+const mostrarMensagemNaoPodeExcluir = (funcionario, event) => {
   event.stopPropagation();
   funcionarioParaExcluir.value = funcionario;
   mostrarModal.value = true;
-};
-
-// Exclui o funcionário após confirmação
-const confirmarExcluirFuncionario = async () => {
-  if (!funcionarioParaExcluir.value) return;
-  
-  try {
-    excluindo.value = true;
-    const resultado = await excluirFuncionario(funcionarioParaExcluir.value.id);
-    
-    if (resultado.success) {
-      // Remove o funcionário da lista local
-      funcionarios.value = funcionarios.value.filter(
-        f => f.id !== funcionarioParaExcluir.value.id
-      );
-      
-      // Emite evento para componentes pais
-      emit('excluir', funcionarioParaExcluir.value);
-    } else {
-      erro.value = resultado.error || 'Erro ao excluir funcionário';
-    }
-  } catch (error) {
-    erro.value = error.message || 'Erro inesperado ao excluir funcionário';
-    console.error('Erro ao excluir funcionário:', error);
-  } finally {
-    excluindo.value = false;
-    funcionarioParaExcluir.value = null;
-  }
 };
 
 // Carrega os funcionários automaticamente se a prop estiver ativada
@@ -172,7 +144,7 @@ defineExpose({
                 ✏️
               </button>
               <button 
-                @click="confirmarExclusao(funcionario, $event)"
+                @click="mostrarMensagemNaoPodeExcluir(funcionario, $event)"
                 class="btn-acao btn-excluir"
                 title="Excluir"
               >
@@ -184,15 +156,15 @@ defineExpose({
       </table>
     </div>
     
-    <!-- Modal de confirmação de exclusão -->
+    <!-- Modal informativo que não é possível excluir -->
     <ModalConfirmacao
       :mostrar="mostrarModal"
-      titulo="Confirmar Exclusão"
-      :mensagem="`Tem certeza que deseja excluir o funcionário ${funcionarioParaExcluir?.nome}?`"
-      textoBotaoConfirmar="Excluir"
-      textoBotaoCancelar="Cancelar"
-      tipo="perigo"
-      @confirmar="confirmarExcluirFuncionario"
+      titulo="Não é possível deletar"
+      mensagem="Não é possível deletar."
+      textoBotaoConfirmar="OK"
+      :textoBotaoCancelar="null"
+      tipo="info"
+      @confirmar="mostrarModal = false"
       @fechar="mostrarModal = false"
     />
   </div>
@@ -205,9 +177,9 @@ defineExpose({
 
 .carregando, .erro, .sem-registros {
   padding: var(--space-md);
+  text-align: center;
   border-radius: var(--border-radius-sm);
   margin-bottom: var(--space-md);
-  text-align: center;
 }
 
 .carregando {
