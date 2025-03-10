@@ -12,6 +12,9 @@ const props = defineProps({
 <template>
   <header class="header">
     <h1 class="titulo">{{ titulo }}</h1>
+    <div class="header-actions">
+      <slot></slot>
+    </div>
   </header>
 </template>
 
@@ -24,6 +27,7 @@ const props = defineProps({
   height: 64px;
   display: flex;
   align-items: center;
+  justify-content: space-between;
   width: 100%;
   box-sizing: border-box;
   position: sticky;
@@ -37,5 +41,16 @@ const props = defineProps({
   font-weight: 600;
   margin: 0;
   color: var(--color-secondary-dark);
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+}
+
+@media (min-width: 769px) {
+  .header-actions {
+    display: none;
+  }
 }
 </style>
